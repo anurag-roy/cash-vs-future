@@ -1,5 +1,5 @@
 import { Instrument, InstrumentRow } from '@/types';
-import { cx } from '@/utils';
+import { cx } from '@/utils/ui';
 import { useEffect, useState } from 'react';
 
 const updateRowBasis = (i: InstrumentRow) => {

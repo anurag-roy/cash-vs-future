@@ -38,3 +38,5 @@ next-env.d.ts
 src/data/*
 !src/data/.gitkeep
 src/env.json
+
+TODO.md
