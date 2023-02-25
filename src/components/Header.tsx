@@ -6,7 +6,7 @@ type HeaderProps = {
   data: string;
 };
 
-function NseLogo() {
+export function NseLogo() {
   return (
     <svg
       width="36"

@@ -3,6 +3,7 @@ import { Main } from '@/components/Main';
 import { kc } from '@/globals/kc';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
+import { useEffect } from 'react';
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   // getProfile call to check if logged in or not
@@ -33,6 +34,12 @@ type HomeProps = {
 };
 
 export default function Home({ status, data }: HomeProps) {
+  useEffect(() => {
+    if (status === 'authorized') {
+      localStorage.setItem('test', data);
+    }
+  }, []);
+
   return (
     <>
       <Head>
