@@ -1,5 +1,6 @@
 import { Header } from '@/components/Header';
 import { Main } from '@/components/Main';
+import env from '@/env.json';
 import { kc } from '@/globals/kc';
 import { GetServerSidePropsContext } from 'next';
 import Head from 'next/head';
@@ -13,7 +14,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     return {
       props: {
         status: 'authorized' as const,
-        data: profile.user_id || '',
+        data: {
+          userId: profile.user_id || '',
+          apiKey: env.API_KEY,
+          //@ts-ignore Access private variable `access_token` in KiteConnect instance
+          accessToken: kc.access_token as string,
+        },
       },
     };
   } catch (error) {
@@ -28,15 +34,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 }
 
-type HomeProps = {
-  status: 'authorized' | 'unauthorized';
-  data: string;
-};
+type HomeProps = Awaited<ReturnType<typeof getServerSideProps>>['props'];
 
 export default function Home({ status, data }: HomeProps) {
   useEffect(() => {
     if (status === 'authorized') {
-      localStorage.setItem('test', data);
+      localStorage.setItem('API_KEY', data.apiKey);
+      localStorage.setItem('ACCESS_TOKEN', data.accessToken);
     }
   }, []);
 
@@ -47,7 +51,10 @@ export default function Home({ status, data }: HomeProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header status={status} data={data} />
+      <Header
+        status={status}
+        data={status === 'authorized' ? data.userId : data}
+      />
       <Main />
     </>
   );
