@@ -41,7 +41,7 @@ export function Main() {
         <div>
           <label
             htmlFor="entryBasis"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-zinc-800 dark:text-zinc-100"
           >
             Entry Basis %
           </label>
@@ -51,24 +51,26 @@ export function Main() {
               defaultValue={0}
               name="entryBasis"
               id="entryBasis"
-              className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border-gray-300 rounded-md"
+              className="dark:bg-zinc-900 dark:text-white shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm border-zinc-300 dark:border-zinc-700 rounded-md "
             />
           </div>
         </div>
         <div>
           <label
             htmlFor="expiry"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-zinc-800 dark:text-zinc-100"
           >
             Expiry
           </label>
           <select
             id="expiry"
             name="expiry"
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+            className="mt-1 pl-3 pr-10 py-2 dark:bg-zinc-900 dark:text-white border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm rounded-md"
           >
             {expiryOptions.map((o) => (
-              <option>{o}</option>
+              <option key={o} value={o}>
+                {o}
+              </option>
             ))}
           </select>
         </div>

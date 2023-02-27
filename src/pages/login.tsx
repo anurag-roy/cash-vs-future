@@ -1,7 +1,6 @@
 import { NseLogo } from '@/components/Header';
 import env from '@/env.json';
 import { kc } from '@/globals/kc';
-import { updateStoredInstruments } from '@/utils/api';
 import { writeFileSync } from 'fs';
 import { GetServerSidePropsContext } from 'next';
 import { useEffect } from 'react';
@@ -24,8 +23,6 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       env.API_SECRET
     );
     writeFileSync('src/data/accessToken.txt', access_token, 'utf-8');
-
-    await updateStoredInstruments();
 
     return {
       props: {

@@ -1,4 +1,5 @@
 import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/solid';
+import { RefreshData } from './Refresh';
 import { ThemeToggle } from './ThemeToggle';
 
 type HeaderProps = {
@@ -56,6 +57,7 @@ export function Header({ status, data }: HeaderProps) {
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100 mr-auto">
         Cash vs Future
       </h1>
+      <RefreshData />
       <ThemeToggle />
       {status === 'authorized' ? (
         <span className="ml-2 inline-flex items-center px-4 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-emerald-800 bg-emerald-50/50 ring-1 ring-inset ring-emerald-700/20 dark:border-emerald-500/30 dark:bg-emerald-500/5 dark:text-emerald-200">
