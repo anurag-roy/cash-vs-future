@@ -61,11 +61,33 @@ export function Table({ instruments, entryBasis }: TableProps) {
     >();
     const tokensToSubscribe: number[] = [];
     for (const i of instruments) {
+      const name = i.instrumentType === 'EQ' ? i.tradingSymbol : i.name;
       tokenToNameMap.set(i.instrumentToken, {
-        name: i.instrumentType === 'EQ' ? i.tradingSymbol : i.name,
+        name: name,
         type: i.instrumentType,
       });
       tokensToSubscribe.push(i.instrumentToken);
+
+      const foundInstrument = rows.find((r) => r.name === name);
+      if (foundInstrument) {
+        if (i.instrumentType === 'EQ') {
+          foundInstrument.equityTradingSymbol = name;
+        } else {
+          foundInstrument.futureTradingSymbol = i.tradingSymbol;
+        }
+      } else {
+        rows.push({
+          name: name,
+          lotSize: i.lotSize,
+          equityTradingSymbol: i.instrumentType === 'EQ' ? name : '',
+          equityAsk: 0,
+          futureTradingSymbol:
+            i.instrumentType === 'FUT' ? i.tradingSymbol : '',
+          futureBid: 0,
+          basis: 0,
+          basisPercent: 0,
+        });
+      }
     }
 
     const ws = new WebSocket(
@@ -75,7 +97,7 @@ export function Table({ instruments, entryBasis }: TableProps) {
     ws.onopen = (_event) => {
       console.log('Connected to Zerodha Kite Socket!');
 
-      const setModeMessage = { a: 'mode', v: ['full', [61512711]] };
+      const setModeMessage = { a: 'mode', v: ['full', tokensToSubscribe] };
       ws.send(JSON.stringify(setModeMessage));
     };
 
