@@ -22,7 +22,7 @@ export function Main() {
       const inputEntryBasis = Number(formData.get('entryBasis')?.valueOf());
       const inputExpiry = formData.get('expiry')?.valueOf() as string;
 
-      fetch(`/getInstruments?expiry=${inputExpiry}`)
+      fetch(`/api/getInstruments?expiry=${inputExpiry}`)
         .then((res) => res.json())
         .then((instruments) => {
           setInstruments(instruments);
@@ -35,7 +35,7 @@ export function Main() {
   return (
     <main>
       <form
-        className="max-w-5xl mx-auto mt-6 rounded-lg py-6 bg-zinc-50 dark:bg-zinc-800 dark:bg-white/5 ring-1 ring-zinc-200 dark:ring-1 dark:ring-white/10 flex justify-between items-end px-8"
+        className="max-w-5xl mx-auto mt-6 mb-12 rounded-lg py-6 bg-zinc-50 dark:bg-zinc-800 dark:bg-white/5 ring-1 ring-zinc-200 dark:ring-1 dark:ring-white/10 flex justify-between items-end px-8"
         onSubmit={handleFormSubmit}
       >
         <div>

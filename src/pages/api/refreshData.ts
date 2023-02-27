@@ -6,7 +6,7 @@ import { writeFileSync } from 'node:fs';
 const handler: NextApiHandler = async (req, res) => {
   const nfoInstruments = await kc.getInstruments(['NFO']);
   const filteredNfoInstruments = nfoInstruments.filter(
-    (i) => i.instrument_type === 'FUT'
+    (i) => i.instrument_type === 'FUT' && !i.tradingsymbol.includes('NIFTY')
   );
 
   const uniqueNames = new Set(filteredNfoInstruments.map((i) => i.name));
@@ -27,7 +27,7 @@ const handler: NextApiHandler = async (req, res) => {
     'utf-8'
   );
 
-  return res.status(200);
+  return res.status(200).json({ data: 'Data refreshed successfully!' });
 };
 
 export default handler;

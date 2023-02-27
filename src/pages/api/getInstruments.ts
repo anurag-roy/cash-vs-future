@@ -16,10 +16,7 @@ const handler: NextApiHandler = async (req, res) => {
     readFileSync('src/data/nse.json', 'utf-8')
   ) as Instrument[];
 
-  return res.json([
-    ...nfo.filter((i) => i.expiry.startsWith(expiry)),
-    ...nse.filter((i) => i.expiry.startsWith(expiry)),
-  ]);
+  return res.json([...nfo.filter((i) => i.expiry.startsWith(expiry)), ...nse]);
 };
 
 export default handler;

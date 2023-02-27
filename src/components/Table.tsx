@@ -1,9 +1,15 @@
 import { Instrument, InstrumentRow } from '@/types';
 import { cx } from '@/utils/ui';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const updateRowBasis = (i: InstrumentRow) => {
-  i.basis = Number((i.futureBid - i.equityAsk).toFixed(2));
+  if (i.futureBid === 0 || i.equityAsk === 0) {
+    i.basis = 0;
+    i.basisPercent = 0;
+    return;
+  }
+
+  i.basis = Number(((i.futureBid - i.equityAsk) * i.lotSize).toFixed(2));
   i.basisPercent = Number(
     (
       (100 * (i.futureBid - i.equityAsk)) /
@@ -22,19 +28,25 @@ const TableRow = ({ i, isTopFive }: TableRowProps) => {
     <tr className="divide-x divide-zinc-200 dark:divide-white/10">
       <td
         className={cx(
-          'font-bold text-lg',
+          'font-bold',
           isTopFive
-            ? 'bg-green-50/60 text-green-800 dark:bg-green-900/5 dark:text-green-500'
+            ? 'bg-green-50/60 text-emerald-800 dark:bg-emerald-900/5 dark:text-emerald-500'
             : 'text-zinc-900 dark:bg-zinc-800/10 dark:text-zinc-100'
         )}
       >
         {i.basisPercent}%
       </td>
       <td className="bg-blue-50/60 text-blue-800 dark:bg-blue-900/5 dark:text-blue-500">
-        {i.equityTradingSymbol} {i.equityAsk}
+        <div className="flex justify-between px-4">
+          <span>{i.equityTradingSymbol}</span>
+          <span>{i.equityAsk}</span>
+        </div>
       </td>
       <td className="bg-red-50/60 text-red-800 dark:bg-red-900/5 dark:text-red-500">
-        {i.futureTradingSymbol} {i.futureBid}
+        <div className="flex justify-between px-4">
+          <span>{i.futureTradingSymbol}</span>
+          <span>{i.futureBid}</span>
+        </div>
       </td>
       <td className="bg-emerald-50/60 text-emerald-800 dark:bg-emerald-900/5 dark:text-emerald-500">
         {i.basis}
@@ -50,35 +62,33 @@ type TableProps = {
 
 export function Table({ instruments, entryBasis }: TableProps) {
   const [rows, setRows] = useState<InstrumentRow[]>([]);
+  const tokenMap = useRef(
+    new Map<number, { name: string; type: 'EQ' | 'FUT' }>()
+  );
+  const originalRows = useRef<InstrumentRow[]>([]);
 
   useEffect(() => {
-    const API_KEY = localStorage.getItem('API_KEY');
-    const ACCESS_TOKEN = localStorage.getItem('ACCESS_TOKEN');
-
-    const tokenToNameMap = new Map<
-      number,
-      { name: string; type: 'EQ' | 'FUT' }
-    >();
     const tokensToSubscribe: number[] = [];
     for (const i of instruments) {
       const name = i.instrumentType === 'EQ' ? i.tradingSymbol : i.name;
-      tokenToNameMap.set(i.instrumentToken, {
+      tokenMap.current.set(i.instrumentToken, {
         name: name,
         type: i.instrumentType,
       });
       tokensToSubscribe.push(i.instrumentToken);
 
-      const foundInstrument = rows.find((r) => r.name === name);
+      const foundInstrument = originalRows.current.find((r) => r.name === name);
       if (foundInstrument) {
         if (i.instrumentType === 'EQ') {
           foundInstrument.equityTradingSymbol = name;
         } else {
+          foundInstrument.lotSize = i.lotSize;
           foundInstrument.futureTradingSymbol = i.tradingSymbol;
         }
       } else {
-        rows.push({
+        originalRows.current.push({
           name: name,
-          lotSize: i.lotSize,
+          lotSize: i.instrumentType === 'EQ' ? 0 : i.lotSize,
           equityTradingSymbol: i.instrumentType === 'EQ' ? name : '',
           equityAsk: 0,
           futureTradingSymbol:
@@ -89,6 +99,10 @@ export function Table({ instruments, entryBasis }: TableProps) {
         });
       }
     }
+    setRows(originalRows.current);
+
+    const API_KEY = localStorage.getItem('API_KEY');
+    const ACCESS_TOKEN = localStorage.getItem('ACCESS_TOKEN');
 
     const ws = new WebSocket(
       `wss://ws.kite.trade?api_key=${API_KEY}&access_token=${ACCESS_TOKEN}`
@@ -96,7 +110,6 @@ export function Table({ instruments, entryBasis }: TableProps) {
 
     ws.onopen = (_event) => {
       console.log('Connected to Zerodha Kite Socket!');
-
       const setModeMessage = { a: 'mode', v: ['full', tokensToSubscribe] };
       ws.send(JSON.stringify(setModeMessage));
     };
@@ -115,42 +128,42 @@ export function Table({ instruments, entryBasis }: TableProps) {
 
         for (let i = 0; i < numberOfPackets; i++) {
           const size = dataView.getInt16(index - 2);
-
           const token = dataView.getInt32(index);
-          const nameAndType = tokenToNameMap.get(token);
+          const nameAndType = tokenMap.current.get(token);
           if (nameAndType) {
             const { name, type } = nameAndType;
-            const row = rows.find((r) => r.name === name)!;
-            if (type === 'EQ') {
-              // 1st Seller
-              const newAsk =
-                (dataView.getInt32(index + 128) * row.lotSize) / 100;
-              if (row.equityAsk !== newAsk) {
-                row.equityAsk = newAsk;
-                updateRowBasis(row);
-              }
-            } else if (type === 'FUT') {
-              // 1st Buyer
-              const newBid =
-                (dataView.getInt32(index + 68) * row.lotSize) / 100;
-              if (row.futureBid !== newBid) {
-                row.futureBid = newBid;
-                updateRowBasis(row);
+            const row = originalRows.current.find((r) => r.name === name);
+            if (row) {
+              if (type === 'EQ') {
+                // 1st Seller
+                const newAsk = dataView.getInt32(index + 128) / 100;
+                if (row.equityAsk !== newAsk) {
+                  row.equityAsk = newAsk;
+                  updateRowBasis(row);
+                }
+              } else if (type === 'FUT') {
+                // 1st Buyer
+                const newBid = dataView.getInt32(index + 68) / 100;
+                if (row.futureBid !== newBid) {
+                  row.futureBid = newBid;
+                  updateRowBasis(row);
+                }
               }
             }
           }
-          index = index + 4 + size;
+          index = index + 2 + size;
         }
-
-        setRows(rows.sort((a, b) => b.basisPercent - a.basisPercent));
+        setRows([
+          ...originalRows.current.sort(
+            (a, b) => b.basisPercent - a.basisPercent
+          ),
+        ]);
       }
     };
-    //clean up function
-    return () => ws.close();
   }, []);
 
   return (
-    <div className="resize-y max-h-[50vh] bg-white dark:bg-zinc-900 overflow-y-auto ring-1 ring-zinc-200 dark:ring-zinc-700 rounded-lg">
+    <div className="resize-y max-h-[50vh] max-w-5xl mx-auto bg-white dark:bg-zinc-900 overflow-y-auto ring-1 ring-zinc-200 dark:ring-zinc-700 rounded-lg">
       <table className="min-w-full divide-y divide-zinc-300 dark:divide-white/10">
         <thead className="bg-zinc-50 dark:bg-zinc-800 sticky top-0">
           <tr className="divide-x divide-zinc-200 dark:divide-white/10">
