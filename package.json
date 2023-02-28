@@ -8,6 +8,7 @@
     "start": "next start -p 8000"
   },
   "dependencies": {
+    "@formkit/auto-animate": "^1.0.0-beta.6",
     "@heroicons/react": "^2.0.16",
     "kiteconnect-ts": "^0.4.5",
     "next": "13.2.1",
