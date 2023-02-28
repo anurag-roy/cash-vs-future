@@ -49,6 +49,7 @@ export function Main() {
             <input
               type="number"
               defaultValue={0}
+              step={0.01}
               name="entryBasis"
               id="entryBasis"
               className="dark:bg-zinc-900 dark:text-white shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm border-zinc-300 dark:border-zinc-700 rounded-md "

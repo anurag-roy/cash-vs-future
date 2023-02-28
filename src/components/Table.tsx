@@ -67,6 +67,8 @@ export function Table({ instruments, entryBasis }: TableProps) {
   );
   const originalRows = useRef<InstrumentRow[]>([]);
 
+  const isOrderPlaced = useRef(false);
+
   useEffect(() => {
     const tokensToSubscribe: number[] = [];
     for (const i of instruments) {
@@ -140,6 +142,27 @@ export function Table({ instruments, entryBasis }: TableProps) {
                 if (row.equityAsk !== newAsk) {
                   row.equityAsk = newAsk;
                   updateRowBasis(row);
+                  if (
+                    !isOrderPlaced.current &&
+                    row.basisPercent >= entryBasis
+                  ) {
+                    isOrderPlaced.current = true;
+                    ws.close();
+                    fetch('api/placeOrder', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        equityTradingSymbol: row.equityTradingSymbol,
+                        equityPrice: row.equityAsk,
+                        futureTradingSymbol: row.futureTradingSymbol,
+                        futurePrice: row.futureBid,
+                        quantity: row.lotSize,
+                      }),
+                    }).then((_res) => alert('Order placed!'));
+                    break;
+                  }
                 }
               } else if (type === 'FUT') {
                 // 1st Buyer
@@ -147,6 +170,27 @@ export function Table({ instruments, entryBasis }: TableProps) {
                 if (row.futureBid !== newBid) {
                   row.futureBid = newBid;
                   updateRowBasis(row);
+                  if (
+                    !isOrderPlaced.current &&
+                    row.basisPercent >= entryBasis
+                  ) {
+                    isOrderPlaced.current = true;
+                    ws.close();
+                    fetch('api/placeOrder', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        equityTradingSymbol: row.equityTradingSymbol,
+                        equityPrice: row.equityAsk,
+                        futureTradingSymbol: row.futureTradingSymbol,
+                        futurePrice: row.futureBid,
+                        quantity: row.lotSize,
+                      }),
+                    }).then((_res) => alert('Order placed!'));
+                    break;
+                  }
                 }
               }
             }
@@ -160,6 +204,12 @@ export function Table({ instruments, entryBasis }: TableProps) {
         ]);
       }
     };
+
+    ws.onclose = () => {
+      setRows([]);
+    };
+
+    return () => ws.close();
   }, []);
 
   return (
