@@ -15,7 +15,7 @@ const updateRowBasis = (i: InstrumentRow) => {
     (
       (100 * (i.futureBid - i.equityAsk)) /
       (i.equityAsk + i.futureBid / 2)
-    ).toFixed(2)
+    ).toFixed(4)
   );
 };
 
