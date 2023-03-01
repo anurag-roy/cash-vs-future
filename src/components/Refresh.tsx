@@ -24,6 +24,7 @@ export function RefreshData() {
       onClick={refreshData}
       className="flex p-2 items-center justify-center rounded-md transition bg-zinc-50 dark:bg-zinc-800 dark:bg-white/5 ring-1 ring-zinc-200 dark:ring-1 dark:ring-white/10"
       aria-label="Refresh Data"
+      title="Refresh Data"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

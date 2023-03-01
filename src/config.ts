@@ -1,4 +1,4 @@
-export const stocksToInclude = [
+export const STOCKS_TO_INCLUDE = [
   'ABB',
   'ABCAPITAL',
   'ABFRL',
