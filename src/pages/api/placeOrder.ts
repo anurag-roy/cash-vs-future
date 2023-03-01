@@ -30,7 +30,11 @@ const handler: NextApiHandler = async (req, res) => {
     transaction_type: 'SELL',
   };
 
-  console.log('Placing orders:', equityOrderBody, futureOrderBody);
+  console.log(
+    `[${new Date().toLocaleTimeString()}] Placing orders:`,
+    equityOrderBody,
+    futureOrderBody
+  );
 
   // TODO: Uncomment real API call
   const orderResults = {};
