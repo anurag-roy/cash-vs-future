@@ -1,4 +1,4 @@
-import { stocksToExclude } from '@/config';
+import { stocksToInclude } from '@/config';
 import { kc } from '@/globals/kc';
 import { mapInstrument } from '@/utils/api';
 import { NextApiHandler } from 'next';
@@ -7,7 +7,7 @@ import { writeFileSync } from 'node:fs';
 const handler: NextApiHandler = async (req, res) => {
   const nfoInstruments = await kc.getInstruments(['NFO']);
   const filteredNfoInstruments = nfoInstruments.filter(
-    (i) => i.instrument_type === 'FUT' && !stocksToExclude.includes(i.name)
+    (i) => i.instrument_type === 'FUT' && stocksToInclude.includes(i.name)
   );
 
   const uniqueNames = new Set(filteredNfoInstruments.map((i) => i.name));
