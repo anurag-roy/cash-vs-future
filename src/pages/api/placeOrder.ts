@@ -4,6 +4,7 @@ import { NextApiHandler } from 'next';
 
 const handler: NextApiHandler = async (req, res) => {
   const {
+    type,
     equityTradingSymbol,
     equityPrice,
     futureTradingSymbol,
@@ -18,7 +19,7 @@ const handler: NextApiHandler = async (req, res) => {
     product: 'CNC',
     quantity: quantity,
     tradingsymbol: equityTradingSymbol,
-    transaction_type: 'BUY',
+    transaction_type: type === 'ENRTY' ? 'BUY' : 'SELL',
   };
 
   const futureOrderBody: PlaceOrderParams = {
@@ -28,11 +29,11 @@ const handler: NextApiHandler = async (req, res) => {
     product: 'NRML',
     quantity: quantity,
     tradingsymbol: futureTradingSymbol,
-    transaction_type: 'SELL',
+    transaction_type: type === 'ENTRY' ? 'SELL' : 'BUY',
   };
 
   console.log(
-    `[${new Date().toLocaleTimeString()}] Placing orders:`,
+    `[${new Date().toLocaleTimeString()}] Placing ${type} orders:`,
     equityOrderBody,
     futureOrderBody
   );
@@ -42,7 +43,7 @@ const handler: NextApiHandler = async (req, res) => {
     kc.placeOrder('regular', futureOrderBody),
   ]);
 
-  console.log('Orders placed successfully!', orderResults);
+  console.log(`${type} Orders placed successfully!`, orderResults);
 
   return res.json(orderResults);
 };

@@ -213,7 +213,7 @@ export function Table({ instruments, entryBasis }: TableProps) {
   }, []);
 
   return (
-    <div className="resize-y max-h-[50vh] max-w-5xl mx-auto bg-white dark:bg-zinc-900 overflow-y-auto ring-1 ring-zinc-200 dark:ring-zinc-700 rounded-lg">
+    <div className="resize-y max-h-[100vh] max-w-5xl mx-auto bg-white dark:bg-zinc-900 overflow-y-auto ring-1 ring-zinc-200 dark:ring-zinc-700 rounded-lg">
       <table className="min-w-full divide-y divide-zinc-300 dark:divide-white/10">
         <thead className="bg-zinc-50 dark:bg-zinc-800 sticky top-0">
           <tr className="divide-x divide-zinc-200 dark:divide-white/10">

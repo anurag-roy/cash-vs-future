@@ -22,7 +22,7 @@ export function RefreshData() {
     <button
       type="button"
       onClick={refreshData}
-      className="flex p-2 items-center justify-center rounded-md transition bg-zinc-50 dark:bg-zinc-800 dark:bg-white/5 ring-1 ring-zinc-200 dark:ring-1 dark:ring-white/10"
+      className="flex p-2 items-center justify-center rounded-md bg-zinc-50 dark:bg-zinc-800 dark:bg-white/5 ring-1 ring-zinc-200 dark:ring-1 dark:ring-white/10"
       aria-label="Refresh Data"
       title="Refresh Data"
     >
