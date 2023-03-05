@@ -55,12 +55,12 @@ const TableRow = ({ i, isTopFive }: TableRowProps) => {
   );
 };
 
-type TableProps = {
+type EntryTableProps = {
   instruments: Instrument[];
   entryBasis: number;
 };
 
-export function Table({ instruments, entryBasis }: TableProps) {
+export function EntryTable({ instruments, entryBasis }: EntryTableProps) {
   const [rows, setRows] = useState<InstrumentRow[]>([]);
   const tokenMap = useRef(
     new Map<number, { name: string; type: 'EQ' | 'FUT' }>()
