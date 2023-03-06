@@ -11,6 +11,7 @@
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.16",
     "kiteconnect-ts": "^0.4.5",
+    "lodash.startcase": "^4.4.0",
     "next": "13.2.1",
     "next-themes": "^0.2.1",
     "react": "18.2.0",
@@ -18,6 +19,7 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
+    "@types/lodash.startcase": "^4.4.7",
     "@types/node": "^18.14.1",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",

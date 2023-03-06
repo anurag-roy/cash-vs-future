@@ -16,10 +16,10 @@ const handler: NextApiHandler = async (req, res) => {
     exchange: 'NSE',
     order_type: 'LIMIT',
     price: equityPrice,
-    product: 'CNC',
+    product: 'MIS',
     quantity: quantity,
     tradingsymbol: equityTradingSymbol,
-    transaction_type: type === 'ENRTY' ? 'BUY' : 'SELL',
+    transaction_type: type === 'ENTRY' ? 'BUY' : 'SELL',
   };
 
   const futureOrderBody: PlaceOrderParams = {
