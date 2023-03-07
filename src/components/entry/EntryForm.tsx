@@ -1,3 +1,4 @@
+import { useStore } from '@/store';
 import { Instrument } from '@/types';
 import { getExpiryOptions } from '@/utils/ui';
 import { FormEvent, useState } from 'react';
@@ -6,28 +7,38 @@ import { EntryTable } from './EntryTable';
 const expiryOptions = getExpiryOptions();
 
 export function EntryForm() {
-  const [isStarted, setIsStarted] = useState(false);
+  const [isStarted, updateIsStarted] = useStore((state) => [
+    state.isStarted,
+    state.updateIsStarted,
+  ]);
   const [instruments, setInstruments] = useState<Instrument[]>([]);
+  const [expiry, updateExpiry] = useStore((state) => [
+    state.expiry,
+    state.updateExpiry,
+  ]);
   const [entryBasis, setEntryBasis] = useState(0);
+  const [exitDiffPercent, updateExitDiffPercent] = useStore((state) => [
+    state.exitDiffPercent,
+    state.updateExitDiffPercent,
+  ]);
 
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (isStarted) {
-      setIsStarted(false);
       setInstruments([]);
       setEntryBasis(0);
+      updateIsStarted(false);
     } else {
       const formData = new FormData(event.currentTarget);
       const inputEntryBasis = Number(formData.get('entryBasis')?.valueOf());
-      const inputExpiry = formData.get('expiry')?.valueOf() as string;
 
-      fetch(`/api/getInstruments?expiry=${inputExpiry}`)
+      fetch(`/api/getInstruments?expiry=${expiry}`)
         .then((res) => res.json())
         .then((instruments) => {
           setInstruments(instruments);
           setEntryBasis(inputEntryBasis);
-          setIsStarted(true);
+          updateIsStarted(true);
         });
     }
   };
@@ -69,6 +80,8 @@ export function EntryForm() {
             id="expiry"
             name="expiry"
             className="mt-1 pl-3 pr-10 py-2 dark:bg-zinc-900 dark:text-white border-zinc-300 dark:border-zinc-700 focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-sm rounded-md"
+            value={expiry}
+            onChange={(e) => updateExpiry(e.target.value)}
           >
             {expiryOptions.map((o) => (
               <option key={o} value={o}>
@@ -76,6 +89,31 @@ export function EntryForm() {
               </option>
             ))}
           </select>
+        </div>
+        <div>
+          <label
+            htmlFor="exitDiffPercent"
+            className="block text-sm font-medium text-zinc-800 dark:text-zinc-100"
+          >
+            Exit Diff %
+          </label>
+          <div className="mt-1">
+            <input
+              type="number"
+              value={exitDiffPercent}
+              step={0.0001}
+              min={0}
+              max={100}
+              name="exitDiffPercent"
+              id="exitDiffPercent"
+              onChange={(e) =>
+                updateExitDiffPercent(
+                  e.target.value ? Number(e.target.value) : ''
+                )
+              }
+              className="dark:bg-zinc-900 dark:text-white shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm border-zinc-300 dark:border-zinc-700 rounded-md "
+            />
+          </div>
         </div>
         <button
           type="submit"

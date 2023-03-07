@@ -2,13 +2,13 @@ import { cx } from '@/utils/ui';
 import { Combobox } from '@headlessui/react';
 import { CheckIcon, ChevronDownIcon } from '@heroicons/react/24/solid';
 import startCase from 'lodash.startcase';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 
 type ComboBoxProps = {
   name: string;
   items: string[];
   selectedItem?: string;
-  setSelectedItem?: Dispatch<SetStateAction<string>>;
+  setSelectedItem?: (newItem: string) => void;
 };
 
 export function ComboBoxInput({

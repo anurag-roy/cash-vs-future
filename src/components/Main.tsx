@@ -1,15 +1,18 @@
+import { useStore } from '@/store';
 import { cx } from '@/utils/ui';
 import { Tab } from '@headlessui/react';
-import { useState } from 'react';
 import { EntryForm } from './entry/EntryForm';
 import { ExitForm } from './exit/ExitForm';
 
 export function Main() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedTab, updateSelectedTab] = useStore((state) => [
+    state.selectedTab,
+    state.updateSelectedTab,
+  ]);
 
   return (
     <main className="mt-6 max-w-5xl w-full mx-auto">
-      <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
+      <Tab.Group selectedIndex={selectedTab} onChange={updateSelectedTab}>
         <Tab.List className="flex gap-6 rounded-xl rounded-b-none bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-white/10 p-2">
           {['Entry', 'Exit'].map((t) => (
             <Tab
