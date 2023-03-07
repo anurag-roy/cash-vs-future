@@ -8,10 +8,14 @@ const expiryOptions = getExpiryOptions();
 
 export function ExitForm() {
   const [isStarted, setIsStarted] = useState(false);
-  const [instruments, setInstruments] = useState<Instrument[]>([]);
-  const [entryBasis, setEntryBasis] = useState(0);
-
   const [stocks, setStocks] = useState([]);
+
+  const [exitStocks, setExitStocks] = useState<{
+    equity: Instrument;
+    future: Instrument;
+  }>();
+  const [enteredDiff, setEnteredDiff] = useState(0);
+  const [exitDiffPercent, setExitDiffPercent] = useState(0);
 
   useEffect(() => {
     fetch('/api/getStocks')
@@ -24,19 +28,27 @@ export function ExitForm() {
 
     if (isStarted) {
       setIsStarted(false);
-      setInstruments([]);
-      setEntryBasis(0);
+      setEnteredDiff(0);
+      setExitDiffPercent(0);
     } else {
       const formData = new FormData(event.currentTarget);
-      const inputEntryBasis = Number(formData.get('entryBasis')?.valueOf());
+      const inputStock = formData.get('stock')?.valueOf() as string;
       const inputExpiry = formData.get('expiry')?.valueOf() as string;
+      const inputEnteredDiff = Number(formData.get('enteredDiff')?.valueOf());
+      const inputExitDiffPercent = Number(
+        formData.get('exitDiffPercent')?.valueOf()
+      );
 
-      fetch(`/api/getInstruments?expiry=${inputExpiry}`)
+      fetch(
+        `/api/getExitInstruments?stock=${encodeURIComponent(
+          inputStock
+        )}&expiry=${inputExpiry}`
+      )
         .then((res) => res.json())
-        .then((instruments) => {
-          setInstruments(instruments);
-          setEntryBasis(inputEntryBasis);
-          setIsStarted(true);
+        .then((stocks) => {
+          setExitStocks(stocks);
+          setEnteredDiff(inputEnteredDiff);
+          setExitDiffPercent(inputExitDiffPercent);
         });
     }
   };
@@ -72,15 +84,15 @@ export function ExitForm() {
             htmlFor="exitDiff"
             className="block text-sm font-medium text-zinc-800 dark:text-zinc-100"
           >
-            Exit Diff
+            Entered Diff
           </label>
           <div className="mt-1">
             <input
               type="number"
               defaultValue={0}
               step={0.0001}
-              name="exitDiff"
-              id="exitDiff"
+              name="enteredDiff"
+              id="enteredDiff"
               className="dark:bg-zinc-900 dark:text-white shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm border-zinc-300 dark:border-zinc-700 rounded-md "
             />
           </div>
@@ -114,7 +126,14 @@ export function ExitForm() {
         </button>
       </form>
       {isStarted && (
-        <ExitTable instruments={instruments} entryBasis={entryBasis} />
+        <ExitTable
+          equityStock={exitStocks?.equity!}
+          futureStock={exitStocks?.future!}
+          enteredDiff={enteredDiff}
+          exitDiffTrigger={Number(
+            (((100 - exitDiffPercent) * enteredDiff) / 100).toFixed(2)
+          )}
+        />
       )}
     </>
   );

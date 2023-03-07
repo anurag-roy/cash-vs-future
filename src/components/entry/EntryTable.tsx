@@ -154,6 +154,7 @@ export function EntryTable({ instruments, entryBasis }: EntryTableProps) {
                         'Content-Type': 'application/json',
                       },
                       body: JSON.stringify({
+                        type: 'ENTRY',
                         equityTradingSymbol: row.equityTradingSymbol,
                         equityPrice: row.equityAsk,
                         futureTradingSymbol: row.futureTradingSymbol,
@@ -182,6 +183,7 @@ export function EntryTable({ instruments, entryBasis }: EntryTableProps) {
                         'Content-Type': 'application/json',
                       },
                       body: JSON.stringify({
+                        type: 'ENTRY',
                         equityTradingSymbol: row.equityTradingSymbol,
                         equityPrice: row.equityAsk,
                         futureTradingSymbol: row.futureTradingSymbol,
