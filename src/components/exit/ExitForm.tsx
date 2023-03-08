@@ -169,7 +169,6 @@ export function ExitForm() {
         <ExitTable
           equityStock={exitStocks?.equity!}
           futureStock={exitStocks?.future!}
-          enteredDiff={enteredDiff || 0}
           exitDiffTrigger={Number(
             (
               ((100 - (exitDiffPercent || 0)) * (enteredDiff || 0)) /

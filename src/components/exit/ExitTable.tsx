@@ -4,17 +4,11 @@ import { memo, useEffect, useRef, useState } from 'react';
 type ExitTableProps = {
   equityStock: Instrument;
   futureStock: Instrument;
-  enteredDiff: number;
   exitDiffTrigger: number;
 };
 
 export const ExitTable = memo(
-  ({
-    equityStock,
-    futureStock,
-    enteredDiff,
-    exitDiffTrigger,
-  }: ExitTableProps) => {
+  ({ equityStock, futureStock, exitDiffTrigger }: ExitTableProps) => {
     const isOrderPlaced = useRef(false);
 
     const [equityPrice, setEquityPrice] = useState(0);
@@ -124,7 +118,7 @@ export const ExitTable = memo(
               <th scope="col">Cash (Equity)</th>
               <th scope="col">Future</th>
               <th scope="col">Current Diff</th>
-              <th scope="col">Entered Diff</th>
+              <th scope="col">Trigger Diff</th>
             </tr>
           </thead>
           <tbody className="text-zinc-900 dark:text-zinc-100 divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-zinc-900 overflow-y-auto">
@@ -145,7 +139,7 @@ export const ExitTable = memo(
                 {(futurePrice - equityPrice).toFixed(2)}
               </td>
               <td className="text-zinc-900 dark:bg-zinc-800/10 dark:text-zinc-100">
-                {enteredDiff}
+                {exitDiffTrigger}
               </td>
             </tr>
           </tbody>
