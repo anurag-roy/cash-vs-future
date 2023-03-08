@@ -1,4 +1,7 @@
 import { create } from 'zustand';
+import { getExpiryOptions } from './utils/ui';
+
+const expiryOptions = getExpiryOptions();
 
 type State = {
   selectedTab: number;
@@ -21,7 +24,7 @@ type Action = {
 export const useStore = create<State & Action>((set) => ({
   selectedTab: 0,
   isStarted: false,
-  expiry: '',
+  expiry: expiryOptions[0],
   enteredStock: '',
   enteredDiff: 0,
   exitDiffPercent: 0,

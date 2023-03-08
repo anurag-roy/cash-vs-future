@@ -38,7 +38,9 @@ export function EntryForm() {
         .then((instruments) => {
           setInstruments(instruments);
           setEntryBasis(inputEntryBasis);
-          updateIsStarted(true);
+          setTimeout(() => {
+            updateIsStarted(true);
+          }, 1000);
         });
     }
   };

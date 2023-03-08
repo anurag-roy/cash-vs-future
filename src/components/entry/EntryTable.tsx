@@ -139,7 +139,7 @@ export const EntryTable = memo(
           alert('Entry order placed!');
           updateSelectedTab(1);
           updateEnteredStock(row.equityTradingSymbol);
-          updateEnteredDiff(row.futureBid - row.equityAsk);
+          updateEnteredDiff(Number((row.futureBid - row.equityAsk).toFixed(2)));
           setTimeout(() => {
             updateIsStarted(true);
           }, 1000);

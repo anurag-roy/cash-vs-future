@@ -1,4 +1,3 @@
-import { kc } from '@/globals/kc';
 import { PlaceOrderParams } from 'kiteconnect-ts';
 import { NextApiHandler } from 'next';
 
@@ -38,11 +37,11 @@ const handler: NextApiHandler = async (req, res) => {
     futureOrderBody
   );
 
-  const orderResults = await Promise.all([
-    kc.placeOrder('regular', equityOrderBody),
-    kc.placeOrder('regular', futureOrderBody),
-  ]);
-
+  // const orderResults = await Promise.all([
+  //   kc.placeOrder('regular', equityOrderBody),
+  //   kc.placeOrder('regular', futureOrderBody),
+  // ]);
+  const orderResults = {};
   console.log(`${type} Orders placed successfully!`, orderResults);
 
   return res.json(orderResults);

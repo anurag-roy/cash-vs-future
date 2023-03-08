@@ -49,7 +49,10 @@ export const ExitTable = memo(
         console.log('Connected to Zerodha Kite Socket!');
         const setModeMessage = {
           a: 'mode',
-          v: ['full', equityStock.instrumentToken, futureStock.instrumentToken],
+          v: [
+            'full',
+            [equityStock.instrumentToken, futureStock.instrumentToken],
+          ],
         };
         ws.send(JSON.stringify(setModeMessage));
       };
@@ -72,7 +75,12 @@ export const ExitTable = memo(
             if (token === equityStock.instrumentToken) {
               const newEquityPrice = dataView.getInt32(index + 68) / 100;
               const newDiff = Number((futurePrice - newEquityPrice).toFixed(2));
-              if (!isOrderPlaced.current && newDiff >= exitDiffTrigger) {
+              if (
+                futurePrice &&
+                newEquityPrice &&
+                !isOrderPlaced.current &&
+                newDiff <= exitDiffTrigger
+              ) {
                 isOrderPlaced.current = true;
                 ws.close();
                 placeExitOrder(newEquityPrice, futurePrice);
@@ -82,7 +90,12 @@ export const ExitTable = memo(
             } else if (token === futureStock.instrumentToken) {
               const newFuturePrice = dataView.getInt32(index + 128) / 100;
               const newDiff = Number((newFuturePrice - equityPrice).toFixed(2));
-              if (!isOrderPlaced.current && newDiff >= exitDiffTrigger) {
+              if (
+                equityPrice &&
+                newFuturePrice &&
+                !isOrderPlaced.current &&
+                newDiff <= exitDiffTrigger
+              ) {
                 isOrderPlaced.current = true;
                 ws.close();
                 placeExitOrder(equityPrice, newFuturePrice);

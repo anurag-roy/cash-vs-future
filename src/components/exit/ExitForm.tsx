@@ -8,7 +8,10 @@ import { ExitTable } from './ExitTable';
 const expiryOptions = getExpiryOptions();
 
 export function ExitForm() {
-  const [isStarted, setIsStarted] = useState(false);
+  const [isStarted, updateIsStarted] = useStore((state) => [
+    state.isStarted,
+    state.updateIsStarted,
+  ]);
   const [stocks, setStocks] = useState([]);
   const [exitStocks, setExitStocks] = useState<{
     equity: Instrument;
@@ -56,9 +59,9 @@ export function ExitForm() {
     event.preventDefault();
 
     if (isStarted) {
-      setIsStarted(false);
-      updateEnteredDiff(0);
-      updateExitDiffPercent(0);
+      updateIsStarted(false);
+      // updateEnteredDiff(0);
+      // updateExitDiffPercent(0);
     } else {
       fetch(
         `/api/getExitInstruments?stock=${encodeURIComponent(
@@ -68,6 +71,9 @@ export function ExitForm() {
         .then((res) => res.json())
         .then((stocks) => {
           setExitStocks(stocks);
+          setTimeout(() => {
+            updateIsStarted(true);
+          }, 1000);
         });
     }
   };
