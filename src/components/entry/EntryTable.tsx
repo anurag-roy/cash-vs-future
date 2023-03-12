@@ -64,12 +64,14 @@ type EntryTableProps = {
 export const EntryTable = memo(
   ({ instruments, entryBasis }: EntryTableProps) => {
     const [
-      updateIsStarted,
+      updateIsEntryStarted,
+      updateIsExitStarted,
       updateSelectedTab,
       updateEnteredStock,
       updateEnteredDiff,
     ] = useStore((state) => [
-      state.updateIsStarted,
+      state.updateIsEntryStarted,
+      state.updateIsExitStarted,
       state.updateSelectedTab,
       state.updateEnteredStock,
       state.updateEnteredDiff,
@@ -141,7 +143,7 @@ export const EntryTable = memo(
           updateEnteredStock(row.equityTradingSymbol);
           updateEnteredDiff(Number((row.futureBid - row.equityAsk).toFixed(2)));
           setTimeout(() => {
-            updateIsStarted(true);
+            updateIsExitStarted(true);
           }, 1000);
         });
       };
@@ -189,7 +191,7 @@ export const EntryTable = memo(
                       isOrderPlaced.current = true;
                       ws.close();
                       placeEntryOrder(row);
-                      updateIsStarted(false);
+                      updateIsEntryStarted(false);
                       break;
                     }
                   }
@@ -206,7 +208,7 @@ export const EntryTable = memo(
                       isOrderPlaced.current = true;
                       ws.close();
                       placeEntryOrder(row);
-                      updateIsStarted(false);
+                      updateIsEntryStarted(false);
                       break;
                     }
                   }
@@ -231,7 +233,7 @@ export const EntryTable = memo(
     }, []);
 
     return (
-      <div className="resize-y max-h-[100vh] max-w-5xl mx-auto bg-white dark:bg-zinc-900 overflow-y-auto ring-1 ring-zinc-200 dark:ring-zinc-700 rounded-lg">
+      <div className="resize-y max-h-[100vh] max-w-5xl mx-auto mb-12 bg-white dark:bg-zinc-900 overflow-y-auto ring-1 ring-zinc-200 dark:ring-zinc-700 rounded-lg">
         <table className="min-w-full divide-y divide-zinc-300 dark:divide-white/10">
           <thead className="bg-zinc-50 dark:bg-zinc-800 sticky top-0">
             <tr className="divide-x divide-zinc-200 dark:divide-white/10">

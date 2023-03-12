@@ -8,9 +8,9 @@ import { ExitTable } from './ExitTable';
 const expiryOptions = getExpiryOptions();
 
 export function ExitForm() {
-  const [isStarted, updateIsStarted] = useStore((state) => [
-    state.isStarted,
-    state.updateIsStarted,
+  const [isExitStarted, updateIsExitStarted] = useStore((state) => [
+    state.isExitStarted,
+    state.updateIsExitStarted,
   ]);
   const [stocks, setStocks] = useState([]);
   const [exitStocks, setExitStocks] = useState<{
@@ -58,10 +58,8 @@ export function ExitForm() {
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isStarted) {
-      updateIsStarted(false);
-      // updateEnteredDiff(0);
-      // updateExitDiffPercent(0);
+    if (isExitStarted) {
+      updateIsExitStarted(false);
     } else {
       fetch(
         `/api/getExitInstruments?stock=${encodeURIComponent(
@@ -72,7 +70,7 @@ export function ExitForm() {
         .then((stocks) => {
           setExitStocks(stocks);
           setTimeout(() => {
-            updateIsStarted(true);
+            updateIsExitStarted(true);
           }, 1000);
         });
     }
@@ -162,13 +160,13 @@ export function ExitForm() {
           type="submit"
           className="px-8 py-2 text-base font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          {isStarted ? 'Stop Exit' : 'Start Exit'}
+          {isExitStarted ? 'Stop Exit' : 'Start Exit'}
         </button>
       </form>
-      {isStarted && (
+      {isExitStarted && exitStocks && (
         <ExitTable
-          equityStock={exitStocks?.equity!}
-          futureStock={exitStocks?.future!}
+          equityStock={exitStocks.equity}
+          futureStock={exitStocks.future}
           exitDiffTrigger={Number(
             (
               ((100 - (exitDiffPercent || 0)) * (enteredDiff || 0)) /

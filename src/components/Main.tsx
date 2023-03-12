@@ -31,10 +31,10 @@ export function Main() {
           ))}
         </Tab.List>
         <Tab.Panels>
-          <Tab.Panel>
+          <Tab.Panel unmount={false}>
             <EntryForm />
           </Tab.Panel>
-          <Tab.Panel>
+          <Tab.Panel unmount={false}>
             <ExitForm />
           </Tab.Panel>
         </Tab.Panels>

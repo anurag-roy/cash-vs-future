@@ -5,7 +5,8 @@ const expiryOptions = getExpiryOptions();
 
 type State = {
   selectedTab: number;
-  isStarted: boolean;
+  isEntryStarted: boolean;
+  isExitStarted: boolean;
   expiry: string;
   enteredStock: string;
   enteredDiff: '' | number;
@@ -14,7 +15,8 @@ type State = {
 
 type Action = {
   updateSelectedTab: (selectedTab: number) => void;
-  updateIsStarted: (isStarted: boolean) => void;
+  updateIsEntryStarted: (isEntryStarted: boolean) => void;
+  updateIsExitStarted: (isEntryStarted: boolean) => void;
   updateExpiry: (expiry: string) => void;
   updateEnteredStock: (enteredStock: string) => void;
   updateEnteredDiff: (enteredDiff: '' | number) => void;
@@ -23,13 +25,15 @@ type Action = {
 
 export const useStore = create<State & Action>((set) => ({
   selectedTab: 0,
-  isStarted: false,
+  isEntryStarted: false,
+  isExitStarted: false,
   expiry: expiryOptions[0],
   enteredStock: '',
   enteredDiff: 0,
   exitDiffPercent: 0,
   updateSelectedTab: (selectedTab) => set(() => ({ selectedTab })),
-  updateIsStarted: (isStarted) => set(() => ({ isStarted })),
+  updateIsEntryStarted: (isEntryStarted) => set(() => ({ isEntryStarted })),
+  updateIsExitStarted: (isExitStarted) => set(() => ({ isExitStarted })),
   updateExpiry: (expiry) => set(() => ({ expiry })),
   updateEnteredStock: (enteredStock) => set(() => ({ enteredStock })),
   updateEnteredDiff: (enteredDiff) => set(() => ({ enteredDiff })),

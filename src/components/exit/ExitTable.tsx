@@ -1,3 +1,4 @@
+import { useStore } from '@/store';
 import { Instrument } from '@/types';
 import { memo, useEffect, useRef, useState } from 'react';
 
@@ -9,9 +10,12 @@ type ExitTableProps = {
 
 export const ExitTable = memo(
   ({ equityStock, futureStock, exitDiffTrigger }: ExitTableProps) => {
+    const updateIsExitStarted = useStore((state) => state.updateIsExitStarted);
     const isOrderPlaced = useRef(false);
 
+    const equityPriceRef = useRef(0);
     const [equityPrice, setEquityPrice] = useState(0);
+    const futurePriceRef = useRef(0);
     const [futurePrice, setFuturePrice] = useState(0);
 
     useEffect(() => {
@@ -67,35 +71,65 @@ export const ExitTable = memo(
             const size = dataView.getInt16(index - 2);
             const token = dataView.getInt32(index);
             if (token === equityStock.instrumentToken) {
-              const newEquityPrice = dataView.getInt32(index + 68) / 100;
-              const newDiff = Number((futurePrice - newEquityPrice).toFixed(2));
+              equityPriceRef.current = dataView.getInt32(index + 68) / 100;
+              const newDiff = Number(
+                (futurePriceRef.current - equityPriceRef.current).toFixed(2)
+              );
+              console.log(
+                'futurePriceRef',
+                futurePriceRef.current,
+                'equityPriceRef',
+                equityPriceRef.current,
+                'newDiff',
+                newDiff,
+                '!isOrderPlaced.current',
+                !isOrderPlaced.current,
+                'newDiff <= exitDiffTrigger',
+                newDiff <= exitDiffTrigger
+              );
               if (
-                futurePrice &&
-                newEquityPrice &&
+                futurePriceRef.current &&
+                equityPriceRef.current &&
                 !isOrderPlaced.current &&
                 newDiff <= exitDiffTrigger
               ) {
                 isOrderPlaced.current = true;
                 ws.close();
-                placeExitOrder(newEquityPrice, futurePrice);
+                placeExitOrder(equityPriceRef.current, futurePriceRef.current);
+                updateIsExitStarted(false);
                 break;
               }
-              setEquityPrice(newEquityPrice);
+              setEquityPrice(equityPriceRef.current);
             } else if (token === futureStock.instrumentToken) {
-              const newFuturePrice = dataView.getInt32(index + 128) / 100;
-              const newDiff = Number((newFuturePrice - equityPrice).toFixed(2));
+              futurePriceRef.current = dataView.getInt32(index + 128) / 100;
+              const newDiff = Number(
+                (futurePriceRef.current - equityPriceRef.current).toFixed(2)
+              );
+              console.log(
+                'equityPriceRef',
+                equityPriceRef.current,
+                'futurePriceRef',
+                futurePriceRef.current,
+                'newDiff',
+                newDiff,
+                '!isOrderPlaced.current',
+                !isOrderPlaced.current,
+                'newDiff <= exitDiffTrigger',
+                newDiff <= exitDiffTrigger
+              );
               if (
-                equityPrice &&
-                newFuturePrice &&
+                equityPriceRef.current &&
+                futurePriceRef.current &&
                 !isOrderPlaced.current &&
                 newDiff <= exitDiffTrigger
               ) {
                 isOrderPlaced.current = true;
                 ws.close();
-                placeExitOrder(equityPrice, newFuturePrice);
+                placeExitOrder(equityPriceRef.current, futurePriceRef.current);
+                updateIsExitStarted(false);
                 break;
               }
-              setFuturePrice(newFuturePrice);
+              setFuturePrice(futurePriceRef.current);
             }
             index = index + 2 + size;
           }

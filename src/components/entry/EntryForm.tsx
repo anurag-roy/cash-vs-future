@@ -7,9 +7,9 @@ import { EntryTable } from './EntryTable';
 const expiryOptions = getExpiryOptions();
 
 export function EntryForm() {
-  const [isStarted, updateIsStarted] = useStore((state) => [
-    state.isStarted,
-    state.updateIsStarted,
+  const [isEntryStarted, updateIsEntryStarted] = useStore((state) => [
+    state.isEntryStarted,
+    state.updateIsEntryStarted,
   ]);
   const [instruments, setInstruments] = useState<Instrument[]>([]);
   const [expiry, updateExpiry] = useStore((state) => [
@@ -25,10 +25,10 @@ export function EntryForm() {
   const handleFormSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (isStarted) {
+    if (isEntryStarted) {
       setInstruments([]);
       setEntryBasis(0);
-      updateIsStarted(false);
+      updateIsEntryStarted(false);
     } else {
       const formData = new FormData(event.currentTarget);
       const inputEntryBasis = Number(formData.get('entryBasis')?.valueOf());
@@ -39,7 +39,7 @@ export function EntryForm() {
           setInstruments(instruments);
           setEntryBasis(inputEntryBasis);
           setTimeout(() => {
-            updateIsStarted(true);
+            updateIsEntryStarted(true);
           }, 1000);
         });
     }
@@ -64,7 +64,6 @@ export function EntryForm() {
               defaultValue={0}
               step={0.0001}
               min={0}
-              max={100}
               name="entryBasis"
               id="entryBasis"
               className="dark:bg-zinc-900 dark:text-white shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm border-zinc-300 dark:border-zinc-700 rounded-md "
@@ -121,10 +120,10 @@ export function EntryForm() {
           type="submit"
           className="px-8 py-2 text-base font-medium rounded-full bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          {isStarted ? 'Stop Entry' : 'Start Entry'}
+          {isEntryStarted ? 'Stop Entry' : 'Start Entry'}
         </button>
       </form>
-      {isStarted && (
+      {isEntryStarted && (
         <EntryTable instruments={instruments} entryBasis={entryBasis} />
       )}
     </>
