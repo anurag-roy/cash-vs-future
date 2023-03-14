@@ -75,18 +75,6 @@ export const ExitTable = memo(
               const newDiff = Number(
                 (futurePriceRef.current - equityPriceRef.current).toFixed(2)
               );
-              console.log(
-                'futurePriceRef',
-                futurePriceRef.current,
-                'equityPriceRef',
-                equityPriceRef.current,
-                'newDiff',
-                newDiff,
-                '!isOrderPlaced.current',
-                !isOrderPlaced.current,
-                'newDiff <= exitDiffTrigger',
-                newDiff <= exitDiffTrigger
-              );
               if (
                 futurePriceRef.current &&
                 equityPriceRef.current &&
@@ -104,18 +92,6 @@ export const ExitTable = memo(
               futurePriceRef.current = dataView.getInt32(index + 128) / 100;
               const newDiff = Number(
                 (futurePriceRef.current - equityPriceRef.current).toFixed(2)
-              );
-              console.log(
-                'equityPriceRef',
-                equityPriceRef.current,
-                'futurePriceRef',
-                futurePriceRef.current,
-                'newDiff',
-                newDiff,
-                '!isOrderPlaced.current',
-                !isOrderPlaced.current,
-                'newDiff <= exitDiffTrigger',
-                newDiff <= exitDiffTrigger
               );
               if (
                 equityPriceRef.current &&

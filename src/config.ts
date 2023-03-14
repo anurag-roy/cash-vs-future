@@ -55,7 +55,6 @@ export const STOCKS_TO_INCLUDE = [
   'GODREJPROP',
   'GRANULES',
   'GRASIM',
-  'GUJGASLTD',
   'HAL',
   'HCLTECH',
   'HDFC',
@@ -122,7 +121,6 @@ export const STOCKS_TO_INCLUDE = [
   'RAIN',
   'RAMCOCEM',
   'RBLBANK',
-  'RECLTD',
   'RELIANCE',
   'SAIL',
   'SBILIFE',
@@ -145,5 +143,4 @@ export const STOCKS_TO_INCLUDE = [
   'TVSMOTOR',
   'VEDL',
   'WIPRO',
-  'ZEEL',
 ];

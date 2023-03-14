@@ -1,3 +1,4 @@
+import { kc } from '@/globals/kc';
 import { PlaceOrderParams } from 'kiteconnect-ts';
 import { NextApiHandler } from 'next';
 
@@ -37,10 +38,18 @@ const handler: NextApiHandler = async (req, res) => {
     futureOrderBody
   );
 
+  const equity = `NSE:${equityTradingSymbol}`;
+  const future = `NFO:${futureTradingSymbol}`;
+
+  const fullQuote = await kc.getQuote([equity, future]);
+  console.log('Case Market Depth', fullQuote[equity].depth);
+  console.log('Future Market Depth', fullQuote[future].depth);
+
   // const orderResults = await Promise.all([
   //   kc.placeOrder('regular', equityOrderBody),
   //   kc.placeOrder('regular', futureOrderBody),
   // ]);
+
   const orderResults = {};
   console.log(`${type} Orders placed successfully!`, orderResults);
 
